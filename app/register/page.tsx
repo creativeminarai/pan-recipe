@@ -39,12 +39,20 @@ function AmountInput({ value, onChange }: {
   return (
     <div className="relative w-[120px]">
       <Input
-        type="number"
-        inputMode="decimal"
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
         placeholder="量"
         className="bg-white pr-8"
         value={localValue}
         onChange={handleChange}
+        onBlur={() => {
+          // 空の場合は0を設定
+          if (localValue === "") {
+            setLocalValue("0")
+            onChange(0)
+          }
+        }}
       />
       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">g</span>
     </div>
