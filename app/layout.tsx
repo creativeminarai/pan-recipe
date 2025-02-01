@@ -24,25 +24,25 @@ export default function RootLayout({
             <li>
               <a href="/" className="flex items-center">
                 <Home className="w-5 h-5 mr-1" />
-                <span>配合履歴</span>
+                <span>履歴</span>
               </a>
             </li>
             <li>
               <a href="/register" className="flex items-center">
                 <ClipboardList className="w-5 h-5 mr-1" />
-                <span>配合登録</span>
+                <span>登録</span>
               </a>
             </li>
             <li>
               <a href="/recipe" className="flex items-center">
                 <Book className="w-5 h-5 mr-1" />
-                <span>レシピ管理</span>
+                <span>レシピ</span>
               </a>
             </li>
             <li>
               <a href="/wheat-info" className="flex items-center">
                 <Wheat className="w-5 h-5 mr-1" />
-                <span>小麦情報</span>
+                <span>小麦</span>
               </a>
             </li>
           </ul>
