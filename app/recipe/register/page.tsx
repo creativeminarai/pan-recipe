@@ -71,7 +71,7 @@ export default function RecipeRegister() {
                 fullWidth
                 label="レシピ名"
                 value={recipeName}
-                onChange={(e) => setRecipeName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRecipeName(e.target.value)}
                 required
               />
             </Grid>
@@ -83,7 +83,7 @@ export default function RecipeRegister() {
                     fullWidth
                     label="材料名"
                     value={ingredient.name}
-                    onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleIngredientChange(index, 'name', e.target.value)}
                     required
                   />
                 </Grid>
@@ -92,7 +92,7 @@ export default function RecipeRegister() {
                     fullWidth
                     label="量"
                     value={ingredient.amount}
-                    onChange={(e) => handleIngredientChange(index, 'amount', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleIngredientChange(index, 'amount', e.target.value)}
                     required
                   />
                 </Grid>

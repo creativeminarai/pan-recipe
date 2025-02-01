@@ -24,7 +24,7 @@ export default function RootLayout({
             <li>
               <a href="/" className="flex items-center">
                 <Home className="w-5 h-5 mr-1" />
-                <span>履歴</span>
+                <span>一覧</span>
               </a>
             </li>
             <li>

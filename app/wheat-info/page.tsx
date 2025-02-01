@@ -39,8 +39,11 @@ export default function WheatInfoPage() {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const addedWheat = await addWheat({ ...newWheat, notes: "", deletedAt: null })
-      setWheats([...wheats, addedWheat].sort((a, b) => a.display_order - b.display_order))
+      const addedWheat = await addWheat({ ...newWheat, notes: "" })
+      if (addedWheat) {
+        const sortedWheats = [...wheats, addedWheat].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+        setWheats(sortedWheats)
+      }
       setNewWheat({
         name: "",
         millingCompany: "",
@@ -61,9 +64,12 @@ export default function WheatInfoPage() {
     setSortConfig({ key, direction })
 
     const sortedWheats = [...wheats].sort((a, b) => {
-      if (a[key] < b[key]) return direction === "asc" ? -1 : 1
-      if (a[key] > b[key]) return direction === "asc" ? 1 : -1
-      return 0
+      const aValue = a[key];
+      const bValue = b[key];
+      if (aValue === null || bValue === null) return 0;
+      if (aValue < bValue) return direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return direction === "asc" ? 1 : -1;
+      return 0;
     })
     setWheats(sortedWheats)
   }

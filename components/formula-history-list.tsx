@@ -20,10 +20,21 @@ export function FormulaHistoryList() {
         getWheats(),
         getBlendHistories(),
       ])
-      console.log('Debug data:', { breadsData, wheatsData, blendHistoriesData })
+
+      // 2週間前の日付を計算
+      const twoWeeksAgo = new Date()
+      twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14)
+      twoWeeksAgo.setHours(0, 0, 0, 0)
+
+      // 2週間分のデータをフィルタリング
+      const filteredHistories = blendHistoriesData.filter(history => {
+        const historyDate = new Date(history.date)
+        return historyDate >= twoWeeksAgo
+      })
+
       setBreads(breadsData)
       setWheats(wheatsData)
-      setBlendHistories(blendHistoriesData)
+      setBlendHistories(filteredHistories)
     }
     fetchData()
   }, [])

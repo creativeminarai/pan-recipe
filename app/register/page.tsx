@@ -12,14 +12,19 @@ import type React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { formatDateWithDay } from "../../utils/date"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export default function RegisterPage() {
   const [breads, setBreads] = useState<Bread[]>([])
   const [wheats, setWheats] = useState<Wheat[]>([])
   const [histories, setHistories] = useState<BlendHistory[]>([])
   const [selectedBread, setSelectedBread] = useState<string | null>(null)
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0])
-  const [blends, setBlends] = useState<{ wheatId: string; amount: number }[]>([{ wheatId: "0", amount: 0 }])
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [selectedDate, setSelectedDate] = useState<string>(
+    searchParams.get('date') || new Date().toISOString().split('T')[0]
+  )
+  const [blends, setBlends] = useState<{ wheatId: string; amount: number }[]>([])
   const [notes, setNotes] = useState<string>("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedBreads, setSelectedBreads] = useState<string[]>([])
@@ -134,7 +139,7 @@ export default function RegisterPage() {
       <FormSection>
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
           <Calendar className="h-4 w-4" />
-          <span>ミキシングする日</span>
+          <span>ミキシングの日</span>
         </div>
         <div className="flex gap-2">
           <Button
@@ -145,7 +150,9 @@ export default function RegisterPage() {
             onClick={() => {
               const date = new Date(selectedDate)
               date.setDate(date.getDate() - 1)
-              setSelectedDate(date.toISOString().split('T')[0])
+              const newDate = date.toISOString().split('T')[0]
+              setSelectedDate(newDate)
+              router.push(`/register?date=${newDate}`)
             }}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -157,7 +164,11 @@ export default function RegisterPage() {
                   type="date"
                   className="absolute opacity-0 w-full h-full top-0 left-0 cursor-pointer"
                   value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
+                  onChange={(e) => {
+                    const newDate = e.target.value
+                    setSelectedDate(newDate)
+                    router.push(`/register?date=${newDate}`)
+                  }}
                 />
                 <div className="flex-1 text-center">
                   {new Date(selectedDate).toLocaleDateString('ja-JP')} ({new Date(selectedDate).toLocaleDateString('ja-JP', { weekday: 'short' })})
@@ -176,7 +187,9 @@ export default function RegisterPage() {
             onClick={() => {
               const date = new Date(selectedDate)
               date.setDate(date.getDate() + 1)
-              setSelectedDate(date.toISOString().split('T')[0])
+              const newDate = date.toISOString().split('T')[0]
+              setSelectedDate(newDate)
+              router.push(`/register?date=${newDate}`)
             }}
           >
             <ChevronRight className="h-4 w-4" />
@@ -186,7 +199,7 @@ export default function RegisterPage() {
 
       <FormSection>
         <div className="flex items-center justify-between gap-2 text-sm text-gray-600 mb-2">
-          <span>一括登録するパン</span>
+          <span>通常通りの配合</span>
           <Button
             type="button"
             variant="outline"
@@ -230,104 +243,110 @@ export default function RegisterPage() {
         </div>
       </FormSection>
       <form onSubmit={handleSubmit}>
+        <div className="space-y-6">
+          <FormSection>
+            <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+              <Scale className="h-4 w-4" />
+              <span>配合を変えて登録</span>
+            </div>
+            <Select onValueChange={(value) => {
+              setSelectedBread(value)
+              setBlends([{ wheatId: "0", amount: 0 }])
+            }}>
+              <SelectTrigger className="bg-white">
+                <SelectValue placeholder="パンを選択してください" />
+              </SelectTrigger>
+              <SelectContent>
+                {breads.map((bread) => (
+                  <SelectItem key={bread.id} value={bread.id.toString()}>
+                    {bread.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormSection>
 
-        <FormSection>
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <Scale className="h-4 w-4" />
-            <span>パンの種類</span>
-          </div>
-          <Select onValueChange={(value) => setSelectedBread(value)}>
-            <SelectTrigger className="bg-white">
-              <SelectValue placeholder="パンを選択してください" />
-            </SelectTrigger>
-            <SelectContent>
-              {breads.map((bread) => (
-                <SelectItem key={bread.id} value={bread.id.toString()}>
-                  {bread.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </FormSection>
-
-        <FormSection>
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <WheatIcon className="h-4 w-4" />
-            <span>小麦粉の配合</span>
-          </div>
-          {blends.map((blend, index) => (
-            <div key={`blend-${index}-${blend.wheatId}-${blend.amount}`} className="grid grid-cols-[minmax(12ch,1fr),120px,auto] gap-2 mb-2">
-              <Select
-                value={blend.wheatId.toString()}
-                onValueChange={(value) => {
-                  const newBlends = [...blends]
-                  newBlends[index].wheatId = value
-                  setBlends(newBlends)
-                }}
-              >
-                <SelectTrigger className="bg-white min-w-[12ch]">
-                  <SelectValue placeholder="小麦粉を選択" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  <SelectItem key="default" value="0">選択してください</SelectItem>
-                  {wheats.map((wheat) => (
-                    <SelectItem key={`wheat-${wheat.id}-${index}`} value={wheat.id.toString()}>
-                      {wheat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="relative w-[120px]">
-                <Input
-                  type="number"
-                  inputMode="decimal"
-                  placeholder="量"
-                  className="bg-white pr-8"
-                  value={blend.amount || ""}
-                  onChange={(e) => {
-                    const newBlends = [...blends].map((b, i) => 
-                      i === index ? { ...b, amount: Number(e.target.value) } : b
-                    )
+          {selectedBread && (
+            <FormSection>
+              <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                <WheatIcon className="h-4 w-4" />
+                <span>小麦粉の配合</span>
+              </div>
+              {blends.map((blend, index) => (
+              <div key={`blend-${index}-${blend.wheatId}-${blend.amount}`} className="grid grid-cols-[minmax(12ch,1fr),120px,auto] gap-2 mb-2">
+                <Select
+                  value={blend.wheatId.toString()}
+                  onValueChange={(value) => {
+                    const newBlends = [...blends]
+                    newBlends[index].wheatId = value
                     setBlends(newBlends)
                   }}
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">g</span>
+                >
+                  <SelectTrigger className="bg-white min-w-[12ch]">
+                    <SelectValue placeholder="小麦粉を選択" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectItem key="default" value="0">選択してください</SelectItem>
+                    {wheats.map((wheat) => (
+                      <SelectItem key={`wheat-${wheat.id}-${index}`} value={wheat.id.toString()}>
+                        {wheat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="relative w-[120px]">
+                  <Input
+                    type="number"
+                    inputMode="decimal"
+                    placeholder="量"
+                    className="bg-white pr-8"
+                    value={blend.amount || ""}
+                    onChange={(e) => {
+                      const newBlends = [...blends].map((b, i) => 
+                        i === index ? { ...b, amount: Number(e.target.value) } : b
+                      )
+                      setBlends(newBlends)
+                    }}
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">g</span>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 text-gray-500 hover:text-red-500"
+                  onClick={() => {
+                    const newBlends = blends.filter((_, i) => i !== index)
+                    if (newBlends.length === 0) {
+                      newBlends.push({ wheatId: "", amount: 0 })
+                    }
+                    setBlends(newBlends)
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
+            ))}
+            {blends.length < 5 && (
               <Button
                 type="button"
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 text-gray-500 hover:text-red-500"
-                onClick={() => {
-                  const newBlends = blends.filter((_, i) => i !== index)
-                  if (newBlends.length === 0) {
-                    newBlends.push({ wheatId: "", amount: 0 })
-                  }
-                  setBlends(newBlends)
-                }}
+                variant="outline"
+                className="w-full mt-2"
+                onClick={() => setBlends([...blends, { wheatId: "0", amount: 0 }])}
               >
-                <X className="h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4" />
+                小麦粉を追加
               </Button>
-            </div>
-          ))}
-          {blends.length < 5 && (
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full mt-2"
-              onClick={() => setBlends([...blends, { wheatId: "0", amount: 0 }])}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              小麦粉を追加
-            </Button>
+            )}
+          </FormSection>
           )}
-        </FormSection>
 
-        <div className="flex justify-center mt-6">
-          <Button type="submit" variant="default" className="w-[30%] bg-gray-800 hover:bg-gray-700 text-white" disabled={isSubmitting}>
-            {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-white" /> : <Save className="mr-2 h-4 w-4 text-white" />}
-            <span className="text-white">登録する</span>
-          </Button>
+          <div className="flex justify-center">
+            <Button type="submit" variant="default" className="w-[30%] bg-gray-800 hover:bg-gray-700 text-white" disabled={isSubmitting}>
+              {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-white" /> : <Save className="mr-2 h-4 w-4 text-white" />}
+              <span className="text-white">登録する</span>
+            </Button>
+          </div>
         </div>
       </form>
 
@@ -413,4 +432,3 @@ export default function RegisterPage() {
     </FormContainer>
   )
 }
-
