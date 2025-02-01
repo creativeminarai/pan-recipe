@@ -17,7 +17,7 @@ export default function RegisterPage() {
   const [histories, setHistories] = useState<BlendHistory[]>([])
   const [selectedBread, setSelectedBread] = useState<string | null>(null)
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0])
-  const [blends, setBlends] = useState<{ wheatId: string; amount: number }[]>([{ wheatId: "", amount: 0 }])
+  const [blends, setBlends] = useState<{ wheatId: string; amount: number }[]>([{ wheatId: "0", amount: 0 }])
   const [notes, setNotes] = useState<string>("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -72,8 +72,13 @@ export default function RegisterPage() {
       const newBlendHistory = {
         date: new Date(selectedDate),
         breadId: selectedBread,
-        wheatBlends: blends.filter((blend) => blend.wheatId !== "" && blend.amount > 0),
-        deletedAt: null,
+        wheatBlends: blends
+          .filter((blend) => blend.wheatId !== "" && blend.wheatId !== "0" && blend.amount > 0)
+          .map(blend => ({
+            wheatId: blend.wheatId.toString(),
+            amount: blend.amount
+          })),
+        history_id: "", // これはサーバー側で生成されます
         notes: notes,
       }
 
@@ -126,7 +131,7 @@ export default function RegisterPage() {
             <span>小麦粉の配合</span>
           </div>
           {blends.map((blend, index) => (
-            <div key={`blend-${index}-${blend.wheatId}-${blend.amount}`} className="grid grid-cols-[1fr,auto,auto] gap-2 mb-2">
+            <div key={`blend-${index}-${blend.wheatId}-${blend.amount}`} className="grid grid-cols-[minmax(12ch,1fr),120px,auto] gap-2 mb-2">
               <Select
                 value={blend.wheatId.toString()}
                 onValueChange={(value) => {
@@ -135,8 +140,8 @@ export default function RegisterPage() {
                   setBlends(newBlends)
                 }}
               >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="小麦粉を選択してください" />
+                <SelectTrigger className="bg-white min-w-[12ch]">
+                  <SelectValue placeholder="小麦粉を選択" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
                   <SelectItem key="default" value="0">選択してください</SelectItem>
@@ -147,15 +152,17 @@ export default function RegisterPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <div className="relative">
+              <div className="relative w-[120px]">
                 <Input
                   type="number"
+                  inputMode="decimal"
                   placeholder="量"
                   className="bg-white pr-8"
                   value={blend.amount || ""}
                   onChange={(e) => {
-                    const newBlends = [...blends]
-                    newBlends[index].amount = Number(e.target.value)
+                    const newBlends = [...blends].map((b, i) => 
+                      i === index ? { ...b, amount: Number(e.target.value) } : b
+                    )
                     setBlends(newBlends)
                   }}
                 />
@@ -183,7 +190,7 @@ export default function RegisterPage() {
               type="button"
               variant="outline"
               className="w-full mt-2"
-              onClick={() => setBlends([...blends, { wheatId: 0, amount: 0 }])}
+              onClick={() => setBlends([...blends, { wheatId: "0", amount: 0 }])}
             >
               <Plus className="mr-2 h-4 w-4" />
               小麦粉を追加

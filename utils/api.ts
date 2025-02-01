@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase"
-import type { Bread, Wheat, BlendHistory } from "@/types"
+import type { Bread, Wheat, BlendHistory, MainBlend } from "@/types"
 import type { Database } from "@/types/supabase"
 
 type Flour = Database["public"]["Tables"]["flours"]["Row"]
@@ -11,6 +11,11 @@ type FormulaHistory = Database["public"]["Tables"]["formula_histories"]["Row"] &
   flour5: Pick<Flour, "id" | "name"> | null
 }
 type DbBread = Database["public"]["Tables"]["breads"]["Row"]
+
+type WheatBlend = {
+  wheatId: string
+  amount: number
+}
 
 const convertBread = (bread: DbBread): Bread => ({
   id: bread.id,
@@ -68,7 +73,7 @@ const convertBlendHistory = (
 export const addBread = async (name: string): Promise<Bread | null> => {
   const { data, error } = await supabase
     .from("breads")
-    .insert([{ name }])
+    .insert([{ name, notes: "", deleted_at: null }])
     .select()
     .single()
 
@@ -77,10 +82,7 @@ export const addBread = async (name: string): Promise<Bread | null> => {
     return null
   }
 
-  return {
-    id: data.id,
-    name: data.name,
-  }
+  return convertBread(data)
 }
 
 export const getBreads = async (): Promise<Bread[]> => {
