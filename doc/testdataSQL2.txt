@@ -1,0 +1,122 @@
+-- 2024-03-01 (1日目)
+INSERT INTO formula_histories (
+  bread_id, recorded_at,
+  flour1_id, flour1_weight,
+  flour2_id, flour2_weight,
+  flour3_id, flour3_weight,
+  flour4_id, flour4_weight,
+  flour5_id, flour5_weight,
+  deleted_at, notes
+)
+VALUES
+-- 食パン
+('2c07300c-0984-40a7-a48f-95b34d9ce17b',
+ '2024-03-01 06:00:00',
+ '1cb2e849-a974-4988-bf1d-d25fe3b822f8', 8100,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, '朝一番製造 6:00-'),
+
+-- バゲット
+('ed15dd5e-bff1-4520-97d6-6c647fbe0180',
+ '2024-03-01 07:30:00',
+ '9561b0af-1290-469e-83cf-66f11ec2799e', 2300,
+ 'fbcaa947-ab6e-48f5-b7b9-9e240219644b', 2200,
+ '11ab6b4e-a5c3-4729-b5bc-6d1fdf599a1d', 480,
+ NULL, 0,
+ NULL, 0,
+ NULL, '2番目製造 7:30-'),
+
+-- クロワッサン
+('9d2b05f8-7dfc-407c-a019-1741e4dd8497',
+ '2024-03-01 09:00:00',
+ '9561b0af-1290-469e-83cf-66f11ec2799e', 5100,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, '3番目製造 9:00-');
+
+-- 2024-03-02 (2日目)
+INSERT INTO formula_histories (
+  bread_id, recorded_at,
+  flour1_id, flour1_weight,
+  flour2_id, flour2_weight,
+  flour3_id, flour3_weight,
+  flour4_id, flour4_weight,
+  flour5_id, flour5_weight,
+  deleted_at, notes
+)
+VALUES
+-- カンパーニュ
+('e192e5b9-06c6-44f3-9850-7109588e6a7a',
+ '2024-03-02 06:00:00',
+ '0be3fe02-edf9-450d-9f9e-5fd10b3cb204', 2950,
+ '11ab6b4e-a5c3-4729-b5bc-6d1fdf599a1d', 1900,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, '朝一番製造 6:00-'),
+
+-- ロデヴ
+('933d0979-6abc-48c7-a102-d945b95d5ed6',
+ '2024-03-02 07:30:00',
+ '0be3fe02-edf9-450d-9f9e-5fd10b3cb204', 4100,
+ '11ab6b4e-a5c3-4729-b5bc-6d1fdf599a1d', 950,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, '2番目製造 7:30-'),
+
+-- 食パン
+('2c07300c-0984-40a7-a48f-95b34d9ce17b',
+ '2024-03-02 09:00:00',
+ '1cb2e849-a974-4988-bf1d-d25fe3b822f8', 7900,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, '3番目製造 9:00-');
+
+-- 2024-03-03 (3日目)
+INSERT INTO formula_histories (
+  bread_id, recorded_at,
+  flour1_id, flour1_weight,
+  flour2_id, flour2_weight,
+  flour3_id, flour3_weight,
+  flour4_id, flour4_weight,
+  flour5_id, flour5_weight,
+  deleted_at, notes
+)
+VALUES
+-- バゲット
+('ed15dd5e-bff1-4520-97d6-6c647fbe0180',
+ '2024-03-03 06:00:00',
+ '9561b0af-1290-469e-83cf-66f11ec2799e', 2200,
+ 'fbcaa947-ab6e-48f5-b7b9-9e240219644b', 2300,
+ '11ab6b4e-a5c3-4729-b5bc-6d1fdf599a1d', 520,
+ NULL, 0,
+ NULL, 0,
+ NULL, '朝一番製造 6:00-'),
+
+-- クロワッサン
+('9d2b05f8-7dfc-407c-a019-1741e4dd8497',
+ '2024-03-03 07:30:00',
+ '9561b0af-1290-469e-83cf-66f11ec2799e', 4900,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, '2番目製造 7:30-'),
+
+-- カンパーニュ
+('e192e5b9-06c6-44f3-9850-7109588e6a7a',
+ '2024-03-03 09:00:00',
+ '0be3fe02-edf9-450d-9f9e-5fd10b3cb204', 3050,
+ '11ab6b4e-a5c3-4729-b5bc-6d1fdf599a1d', 2100,
+ NULL, 0,
+ NULL, 0,
+ NULL, 0,
+ NULL, '3番目製造 9:00-');

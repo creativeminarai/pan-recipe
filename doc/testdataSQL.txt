@@ -1,0 +1,207 @@
+-- ▼▼▼ 1) BREADS: テストデータ登録 ▼▼▼
+INSERT INTO breads (
+  id,
+  name,
+  deleted_at,
+  notes
+)
+VALUES
+  (
+    gen_random_uuid(),
+    '食パン',
+    NULL,
+    ''
+  ),
+  (
+    gen_random_uuid(),
+    'バゲット', 
+    NULL,
+    ''
+  ),
+  (
+    gen_random_uuid(),
+    'ロデヴ',
+    NULL,
+    ''
+  ),
+  (
+    gen_random_uuid(),
+    'クロワッサン',
+    NULL,
+    ''
+  ),
+  (
+    gen_random_uuid(),
+    'カンパーニュ',
+    NULL,
+    ''
+  );
+
+
+-- ▼▼▼ 2) FLOURS: テストデータ登録 ▼▼▼
+INSERT INTO flours (
+  id,
+  name,
+  company,
+  origin,
+  protein,
+  ash_content,
+  display_order,
+  deleted_at,
+  notes
+)
+VALUES
+  (
+    gen_random_uuid(),
+    'アポロ',
+    '日清製粉',
+    '北海道',
+    11.50,
+    0.40,
+    1,
+    NULL,
+    ''
+  ),
+  (
+    gen_random_uuid(),
+    'リスドオル',
+    '日清製粉',
+    'フランス',
+    10.50,
+    0.50,
+    2,
+    NULL,
+    ''
+  ),
+  (
+    gen_random_uuid(),
+    '春よこいRED',
+    '日清製粉',
+    '北海道',
+    12.00,
+    0.50,
+    3,
+    NULL,
+    ''
+  ),
+  (
+    gen_random_uuid(),
+    'TYPE100',
+    '日清製粉',
+    'フランス',
+    9.50,
+    0.50,
+    4,
+    NULL,
+    ''
+  ),
+  (
+    gen_random_uuid(),
+    'キタノカオリ',
+    '江別製粉',
+    '北海道',
+    11.80,
+    0.40,
+    5,
+    NULL,
+    ''
+  );
+
+
+-- ▼▼▼ 3) ID取得用のビュー作成 ▼▼▼
+CREATE VIEW bread_ids AS
+SELECT id, name FROM breads ORDER BY created_at;
+
+CREATE VIEW flour_ids AS 
+SELECT id, name FROM flours ORDER BY created_at;
+
+
+-- ▼▼▼ 4) MAIN_FORMULAS: メイン配合を登録 ▼▼▼
+INSERT INTO main_formulas (
+  bread_id,
+  flour1_id, flour1_weight,
+  flour2_id, flour2_weight,
+  flour3_id, flour3_weight,
+  flour4_id, flour4_weight,
+  flour5_id, flour5_weight,
+  deleted_at,
+  notes
+)
+SELECT 
+  b.id as bread_id,
+  f1.id as flour1_id, 8000 as flour1_weight,
+  NULL as flour2_id, 0 as flour2_weight,
+  NULL as flour3_id, 0 as flour3_weight,
+  NULL as flour4_id, 0 as flour4_weight,
+  NULL as flour5_id, 0 as flour5_weight,
+  NULL as deleted_at,
+  '' as notes
+FROM bread_ids b
+CROSS JOIN flour_ids f1
+WHERE b.name = '食パン'
+AND f1.name = 'アポロ';
+
+INSERT INTO main_formulas (
+  bread_id,
+  flour1_id, flour1_weight,
+  flour2_id, flour2_weight,
+  flour3_id, flour3_weight,
+  flour4_id, flour4_weight,
+  flour5_id, flour5_weight,
+  deleted_at,
+  notes
+)
+SELECT 
+  b.id as bread_id,
+  f1.id as flour1_id, 2250 as flour1_weight,
+  f2.id as flour2_id, 2250 as flour2_weight,
+  f3.id as flour3_id, 500 as flour3_weight,
+  NULL as flour4_id, 0 as flour4_weight,
+  NULL as flour5_id, 0 as flour5_weight,
+  NULL as deleted_at,
+  '' as notes
+FROM bread_ids b
+CROSS JOIN flour_ids f1
+CROSS JOIN flour_ids f2
+CROSS JOIN flour_ids f3
+WHERE b.name = 'バゲット'
+AND f1.name = 'リスドオル'
+AND f2.name = '春よこいRED'
+AND f3.name = 'TYPE100';
+
+-- 以下同様に、ロデヴ、クロワッサン、カンパーニュの配合を追加
+
+
+-- ▼▼▼ 5) FORMULA_HISTORIES: 配合履歴を登録 ▼▼▼
+INSERT INTO formula_histories (
+  bread_id,
+  recorded_at,
+  flour1_id, flour1_weight,
+  flour2_id, flour2_weight,
+  flour3_id, flour3_weight,
+  flour4_id, flour4_weight,
+  flour5_id, flour5_weight,
+  deleted_at,
+  notes
+)
+SELECT 
+  b.id as bread_id,
+  '2023-07-01' as recorded_at,
+  f1.id as flour1_id, 8000 as flour1_weight,
+  NULL as flour2_id, 0 as flour2_weight,
+  NULL as flour3_id, 0 as flour3_weight,
+  NULL as flour4_id, 0 as flour4_weight,
+  NULL as flour5_id, 0 as flour5_weight,
+  NULL as deleted_at,
+  '' as notes
+FROM bread_ids b
+CROSS JOIN flour_ids f1
+WHERE b.name = '食パン'
+AND f1.name = 'アポロ';
+
+-- 以下同様に、残りの配合履歴を追加
+
+
+-- ▼▼▼ 6) 後片付け：一時ビューの削除 ▼▼▼
+DROP VIEW IF EXISTS bread_ids;
+DROP VIEW IF EXISTS flour_ids;
