@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, Suspense } from "react"
+import { useState, useEffect, useRef, Suspense } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -13,51 +13,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { formatDateWithDay } from "../../utils/date"
 import { useRouter, useSearchParams } from "next/navigation"
-
-// 小麦の量入力コンポーネント
-function AmountInput({ value, onChange }: {
-  value: number
-  onChange: (value: number) => void
-}) {
-  const [localValue, setLocalValue] = useState<string>(value?.toString() || "")
-
-  // 親コンポーネントからの値の更新を反映
-  useEffect(() => {
-    setLocalValue(value?.toString() || "")
-  }, [value])
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
-    setLocalValue(newValue)
-    // 数値として有効な場合のみ親コンポーネントに通知
-    const numValue = Number(newValue)
-    if (!isNaN(numValue)) {
-      onChange(numValue)
-    }
-  }
-
-  return (
-    <div className="relative w-[120px]">
-      <Input
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
-        placeholder="量"
-        className="bg-white pr-8"
-        value={localValue}
-        onChange={handleChange}
-        onBlur={() => {
-          // 空の場合は0を設定
-          if (localValue === "") {
-            setLocalValue("0")
-            onChange(0)
-          }
-        }}
-      />
-      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">g</span>
-    </div>
-  )
-}
+import { AmountInput } from "@/components/ui/amount-input"
 
 // 小麦の入力フィールドコンポーネント
 function WheatAmountInput({ wheat, amount, onChange }: {
@@ -352,7 +308,7 @@ function RegisterForm() {
                 <span>小麦粉の配合</span>
               </div>
               {blends.map((blend, index) => (
-              <div key={`blend-${index}-${blend.wheatId}-${blend.amount}`} className="grid grid-cols-[minmax(12ch,1fr),120px,auto] gap-2 mb-2">
+              <div key={`blend-${index}`} className="grid grid-cols-[minmax(12ch,1fr),120px,auto] gap-2 mb-2">
                 <Select
                   value={blend.wheatId.toString()}
                   onValueChange={(value) => {
@@ -373,15 +329,17 @@ function RegisterForm() {
                     ))}
                   </SelectContent>
                 </Select>
-                <AmountInput
-                  value={blend.amount}
-                  onChange={(value) => {
-                    const newBlends = [...blends].map((b, i) => 
-                      i === index ? { ...b, amount: value } : b
-                    )
-                    setBlends(newBlends)
-                  }}
-                />
+                <div className="relative w-[120px]">
+                  <AmountInput
+                    value={blend.amount}
+                    onChange={(value) => {
+                      const newBlends = [...blends].map((b, i) => 
+                        i === index ? { ...b, amount: value } : b
+                      )
+                      setBlends(newBlends)
+                    }}
+                  />
+                </div>
                 <Button
                   type="button"
                   variant="ghost"
