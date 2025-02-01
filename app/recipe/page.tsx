@@ -171,7 +171,7 @@ export default function RecipePage() {
             <span>小麦粉の配合</span>
           </div>
           {blends.map((blend, index) => (
-            <div key={index} className="grid grid-cols-[1fr,auto,auto] gap-2 mb-2">
+            <div key={index} className="grid grid-cols-[minmax(12ch,2fr),minmax(120px,1fr),auto] gap-2 mb-2">
               <Select
                 value={blend.wheatId}
                 onValueChange={(value) => {
@@ -180,8 +180,8 @@ export default function RecipePage() {
                   setBlends(newBlends)
                 }}
               >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="小麦粉を選択してください" />
+                <SelectTrigger className="bg-white min-w-[12ch]">
+                  <SelectValue placeholder="小麦粉を選択" />
                 </SelectTrigger>
                 <SelectContent>
                   {wheats.map((wheat) => (
@@ -191,9 +191,10 @@ export default function RecipePage() {
                   ))}
                 </SelectContent>
               </Select>
-              <div className="relative">
+              <div className="relative w-[120px]">
                 <Input
                   type="number"
+                  inputMode="decimal"
                   placeholder="量"
                   className="bg-white pr-8"
                   value={blend.amount || ""}
