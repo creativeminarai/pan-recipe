@@ -14,6 +14,77 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { formatDateWithDay } from "../../utils/date"
 import { useRouter, useSearchParams } from "next/navigation"
 
+// 小麦の量入力コンポーネント
+function AmountInput({ value, onChange }: {
+  value: number
+  onChange: (value: number) => void
+}) {
+  const [localValue, setLocalValue] = useState<string>(value?.toString() || "")
+
+  // 親コンポーネントからの値の更新を反映
+  useEffect(() => {
+    setLocalValue(value?.toString() || "")
+  }, [value])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    setLocalValue(newValue)
+    // 数値として有効な場合のみ親コンポーネントに通知
+    const numValue = Number(newValue)
+    if (!isNaN(numValue)) {
+      onChange(numValue)
+    }
+  }
+
+  return (
+    <div className="relative w-[120px]">
+      <Input
+        type="number"
+        inputMode="decimal"
+        placeholder="量"
+        className="bg-white pr-8"
+        value={localValue}
+        onChange={handleChange}
+      />
+      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">g</span>
+    </div>
+  )
+}
+
+// 小麦の入力フィールドコンポーネント
+function WheatAmountInput({ wheat, amount, onChange }: {
+  wheat: Wheat
+  amount: number | string
+  onChange: (amount: number) => void
+}) {
+  const [localAmount, setLocalAmount] = useState(amount)
+
+  // 親コンポーネントのamountが変更された場合にlocalAmountを更新
+  useEffect(() => {
+    setLocalAmount(amount)
+  }, [amount])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newAmount = e.target.value
+    setLocalAmount(newAmount)
+    onChange(parseFloat(newAmount) || 0)
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex-1">{wheat.name}</div>
+      <div className="w-32">
+        <Input
+          type="number"
+          value={localAmount}
+          onChange={handleChange}
+          placeholder="g"
+        />
+      </div>
+    </div>
+  )
+}
+
 function RegisterForm() {
   const [breads, setBreads] = useState<Bread[]>([])
   const [wheats, setWheats] = useState<Wheat[]>([])
@@ -294,22 +365,15 @@ function RegisterForm() {
                     ))}
                   </SelectContent>
                 </Select>
-                <div className="relative w-[120px]">
-                  <Input
-                    type="number"
-                    inputMode="decimal"
-                    placeholder="量"
-                    className="bg-white pr-8"
-                    value={blend.amount || ""}
-                    onChange={(e) => {
-                      const newBlends = [...blends].map((b, i) => 
-                        i === index ? { ...b, amount: Number(e.target.value) } : b
-                      )
-                      setBlends(newBlends)
-                    }}
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">g</span>
-                </div>
+                <AmountInput
+                  value={blend.amount}
+                  onChange={(value) => {
+                    const newBlends = [...blends].map((b, i) => 
+                      i === index ? { ...b, amount: value } : b
+                    )
+                    setBlends(newBlends)
+                  }}
+                />
                 <Button
                   type="button"
                   variant="ghost"
