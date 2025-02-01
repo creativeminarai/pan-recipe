@@ -30,11 +30,14 @@ export function FormulaHistoryList() {
 
   const groupedHistories = blendHistories.reduce(
     (acc, history) => {
-      const date = new Date(history.date).toLocaleDateString("ja-JP")
-      if (!acc[date]) acc[date] = {}
+      const date = new Date(history.date)
+      const dateStr = date.toLocaleDateString("ja-JP")
+      const day = date.toLocaleDateString('ja-JP', { weekday: 'short' })
+      const dateWithDay = `${dateStr} (${day})`
+      if (!acc[dateWithDay]) acc[dateWithDay] = {}
       const breadIdStr = String(history.breadId)
-      if (!acc[date][breadIdStr]) acc[date][breadIdStr] = []
-      acc[date][breadIdStr].push(history)
+      if (!acc[dateWithDay][breadIdStr]) acc[dateWithDay][breadIdStr] = []
+      acc[dateWithDay][breadIdStr].push(history)
       return acc
     },
     {} as Record<string, Record<string, BlendHistory[]>>,
@@ -44,7 +47,9 @@ export function FormulaHistoryList() {
     <div>
       {Object.entries(groupedHistories).map(([date, dateHistories], index) => (
         <div key={date} className={`mb-6 ${index !== 0 ? "border-t border-gray-300 pt-4" : ""}`}>
-          <h2 className="text-xl font-semibold mb-2">{date}</h2>
+          <h2 className="text-xl font-semibold mb-2">
+            <span className="inline-block min-w-[8em]">{date}</span>
+          </h2>
           <Accordion type="multiple" className="w-full space-y-2">
             {breads.map((bread) => {
               const histories = dateHistories[bread.id]

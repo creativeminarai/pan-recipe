@@ -11,6 +11,7 @@ import { Loader2, WheatIcon, Scale, Plus, Save, Calendar, History, X, ChevronLef
 import type React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { formatDateWithDay } from "../../utils/date"
 
 export default function RegisterPage() {
   const [breads, setBreads] = useState<Bread[]>([])
@@ -149,12 +150,24 @@ export default function RegisterPage() {
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Input
-            type="date"
-            className="bg-white flex-1"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-          />
+          <div className="flex-1">
+            <div className="relative w-full bg-white rounded-md border border-input px-3 py-2 text-sm ring-offset-background">
+              <div className="flex justify-between items-center">
+                <input
+                  type="date"
+                  className="absolute opacity-0 w-full h-full top-0 left-0 cursor-pointer"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+                <div className="flex-1 text-center">
+                  {new Date(selectedDate).toLocaleDateString('ja-JP')} ({new Date(selectedDate).toLocaleDateString('ja-JP', { weekday: 'short' })})
+                </div>
+                <div className="text-gray-400">
+                  <Calendar className="h-4 w-4" />
+                </div>
+              </div>
+            </div>
+          </div>
           <Button
             type="button"
             variant="outline"
