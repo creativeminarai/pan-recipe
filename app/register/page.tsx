@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { formatDateWithDay } from "../../utils/date"
 import { useRouter, useSearchParams } from "next/navigation"
 
-export default function RegisterPage() {
+function RegisterForm() {
   const [breads, setBreads] = useState<Bread[]>([])
   const [wheats, setWheats] = useState<Wheat[]>([])
   const [histories, setHistories] = useState<BlendHistory[]>([])
@@ -430,5 +430,13 @@ export default function RegisterPage() {
         </div>
       )}
     </FormContainer>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RegisterForm />
+    </Suspense>
   )
 }
