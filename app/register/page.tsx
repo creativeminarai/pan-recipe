@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button"
 import { FormContainer, FormSection } from "@/components/ui/form-layout"
 import { getBreads, getWheats, getBlendHistories, addBlendHistory, getMainBlends, deleteBlendHistory, getMainBlend } from "../../utils/api"
 import type { Bread, Wheat, BlendHistory, MainBlend } from "../../types"
-import { Loader2, WheatIcon, Scale, Plus, Save, Calendar, History, X } from "lucide-react"
+import { Loader2, WheatIcon, Scale, Plus, Save, Calendar, History, X, ChevronLeft, ChevronRight } from "lucide-react"
 import type React from "react"
 import { Card, CardContent } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export default function RegisterPage() {
   const [breads, setBreads] = useState<Bread[]>([])
@@ -20,6 +21,7 @@ export default function RegisterPage() {
   const [blends, setBlends] = useState<{ wheatId: string; amount: number }[]>([{ wheatId: "0", amount: 0 }])
   const [notes, setNotes] = useState<string>("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedBreads, setSelectedBreads] = useState<string[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,6 +86,44 @@ export default function RegisterPage() {
 
       await addBlendHistory(newBlendHistory)
       alert("配合が登録されました")
+      window.location.reload()
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleBulkRegister = async () => {
+    if (selectedBreads.length === 0) {
+      alert("パンを選択してください")
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const mainBlends = await Promise.all(
+        selectedBreads.map(breadId => getMainBlend(breadId))
+      )
+
+      const validMainBlends = mainBlends.filter((blend): blend is MainBlend => blend !== null)
+      
+      await Promise.all(
+        validMainBlends.map(mainBlend => {
+          const newBlendHistory = {
+            date: new Date(selectedDate),
+            breadId: mainBlend.breadId,
+            wheatBlends: mainBlend.wheatBlends,
+            history_id: "",
+            notes: "",
+          }
+          return addBlendHistory(newBlendHistory)
+        })
+      )
+
+      alert(`${validMainBlends.length}件の配合を登録しました`)
+      window.location.reload()
+    } catch (error) {
+      console.error("Error registering blends:", error)
+      alert("登録中にエラーが発生しました")
     } finally {
       setIsSubmitting(false)
     }
@@ -92,19 +132,93 @@ export default function RegisterPage() {
   return (
     <FormContainer>
       <h1 className="text-2xl font-semibold mb-6">配合登録</h1>
-      <form onSubmit={handleSubmit}>
-        <FormSection>
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <Calendar className="h-4 w-4" />
-            <span>ミキシングする日</span>
-          </div>
+      <FormSection>
+        <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+          <Calendar className="h-4 w-4" />
+          <span>ミキシングする日</span>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-10 w-10"
+            onClick={() => {
+              const date = new Date(selectedDate)
+              date.setDate(date.getDate() - 1)
+              setSelectedDate(date.toISOString().split('T')[0])
+            }}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
           <Input
             type="date"
-            className="bg-white"
+            className="bg-white flex-1"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
-        </FormSection>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-10 w-10"
+            onClick={() => {
+              const date = new Date(selectedDate)
+              date.setDate(date.getDate() + 1)
+              setSelectedDate(date.toISOString().split('T')[0])
+            }}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </FormSection>
+
+      <FormSection>
+        <div className="flex items-center justify-between gap-2 text-sm text-gray-600 mb-2">
+          <span>一括登録するパン</span>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-8"
+            onClick={handleBulkRegister}
+            disabled={isSubmitting || selectedBreads.length === 0}
+          >
+            {isSubmitting ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <Plus className="h-4 w-4 mr-2" />
+            )}
+            一括登録
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          {breads.map((bread) => (
+            <div
+              key={bread.id}
+              className="flex items-center space-x-2 bg-white rounded-md border p-2"
+            >
+              <Checkbox
+                id={`bread-${bread.id}`}
+                checked={selectedBreads.includes(bread.id)}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setSelectedBreads(prev => [...prev, bread.id])
+                  } else {
+                    setSelectedBreads(prev => prev.filter(id => id !== bread.id))
+                  }
+                }}
+              />
+              <label
+                htmlFor={`bread-${bread.id}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {bread.name}
+              </label>
+            </div>
+          ))}
+        </div>
+      </FormSection>
+      <form onSubmit={handleSubmit}>
 
         <FormSection>
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
