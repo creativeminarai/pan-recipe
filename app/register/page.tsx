@@ -85,7 +85,6 @@ export default function RegisterPage() {
       }
 
       await addBlendHistory(newBlendHistory)
-      alert("配合が登録されました")
       window.location.reload()
     } finally {
       setIsSubmitting(false)
@@ -119,7 +118,6 @@ export default function RegisterPage() {
         })
       )
 
-      alert(`${validMainBlends.length}件の配合を登録しました`)
       window.location.reload()
     } catch (error) {
       console.error("Error registering blends:", error)
@@ -347,14 +345,11 @@ export default function RegisterPage() {
                         size="icon"
                         className="absolute top-2 right-2 h-8 w-8 text-gray-500 hover:text-red-500"
                         onClick={async () => {
-                          if (!confirm("この配合履歴を削除してもよろしいですか？")) return
                           const success = await deleteBlendHistory(history.history_id)
                           if (success) {
                             setHistories((prev) => 
                               prev.filter((h) => h.history_id !== history.history_id)
                             )
-                          } else {
-                            alert("削除に失敗しました")
                           }
                         }}
                       >

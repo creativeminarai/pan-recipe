@@ -88,32 +88,32 @@ export default function WheatInfoPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50/50">
-                <TableHead className="font-medium">小麦の名称</TableHead>
+                <TableHead className="font-medium text-center w-[12em]">名称</TableHead>
                 <TableHead
-                  className="font-medium text-right px-1 cursor-pointer"
+                  className="font-medium text-center px-1 cursor-pointer"
                   onClick={() => sortData("proteinPercentage")}
                 >
-                  蛋白 {getSortIcon("proteinPercentage")}
+                  <div className="text-center">蛋白 {getSortIcon("proteinPercentage")}</div>
                 </TableHead>
                 <TableHead
-                  className="font-medium text-right px-1 cursor-pointer"
+                  className="font-medium text-center px-1 cursor-pointer"
                   onClick={() => sortData("ashPercentage")}
                 >
-                  灰分 {getSortIcon("ashPercentage")}
+                  <div className="text-center">灰分 {getSortIcon("ashPercentage")}</div>
                 </TableHead>
-                <TableHead className="font-medium min-w-[9em]">製粉会社</TableHead>
-                <TableHead className="font-medium min-w-[9em]">小麦の産地</TableHead>
-                <TableHead className="font-medium w-16">操作</TableHead>
+                <TableHead className="font-medium w-[10em] text-center">産地</TableHead>
+                <TableHead className="font-medium w-[10em] text-center">製粉会社</TableHead>
+                <TableHead className="font-medium w-16 text-center">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {wheats.map((wheat) => (
                 <TableRow key={wheat.id}>
-                  <TableCell>{wheat.name}</TableCell>
-                  <TableCell className="text-right px-1">{wheat.proteinPercentage.toFixed(1)}</TableCell>
-                  <TableCell className="text-right px-1">{wheat.ashPercentage.toFixed(1)}</TableCell>
-                  <TableCell>{wheat.millingCompany}</TableCell>
-                  <TableCell>{wheat.origin}</TableCell>
+                  <TableCell className="text-center">{wheat.name}</TableCell>
+                  <TableCell className="text-center px-1">{wheat.proteinPercentage.toFixed(1)}</TableCell>
+                  <TableCell className="text-center px-1">{wheat.ashPercentage.toFixed(1)}</TableCell>
+                  <TableCell className="text-center">{wheat.origin}</TableCell>
+                  <TableCell className="text-center">{wheat.millingCompany}</TableCell>
                   <TableCell>
                     <Button
                       type="button"
@@ -148,7 +148,7 @@ export default function WheatInfoPage() {
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm text-gray-600">
                 <Building2 className="h-4 w-4" />
-                小麦の名称
+                名称
               </label>
               <Input
                 className="bg-white"
@@ -172,7 +172,7 @@ export default function WheatInfoPage() {
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm text-gray-600">
                 <MapPin className="h-4 w-4" />
-                小麦の産地
+                産地
               </label>
               <Input
                 className="bg-white"
