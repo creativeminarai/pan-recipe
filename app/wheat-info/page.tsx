@@ -94,7 +94,12 @@ export default function WheatInfoPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50/50">
-                <TableHead className="font-medium text-center min-w-[10em] sticky left-0 bg-gray-50/50 z-20">名称</TableHead>
+                <TableHead
+                  className="font-medium text-center min-w-[10em] sticky left-0 bg-gray-50/50 z-20 cursor-pointer"
+                  onClick={() => sortData("display_order")}
+                >
+                  <div className="text-center">名称 {getSortIcon("display_order")}</div>
+                </TableHead>
                 <TableHead
                   className="font-medium text-center px-1 cursor-pointer"
                   onClick={() => sortData("proteinPercentage")}
