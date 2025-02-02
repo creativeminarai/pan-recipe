@@ -57,7 +57,7 @@ function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [selectedDate, setSelectedDate] = useState<string>(
-    searchParams.get('date') || new Date().toISOString().split('T')[0]
+    searchParams.get('date') || new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Tokyo' }).split('/').join('-')
   )
   const [blends, setBlends] = useState<{ wheatId: string; amount: number }[]>([])
   const [notes, setNotes] = useState<string>("")
