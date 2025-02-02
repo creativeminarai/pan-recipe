@@ -108,7 +108,7 @@ export default function WheatInfoPage() {
                   <div className="text-center">灰分 {getSortIcon("ashPercentage")}</div>
                 </TableHead>
                 <TableHead className="font-medium w-[10em] text-center">産地</TableHead>
-                <TableHead className="font-medium w-[10em] text-center">製粉会社</TableHead>
+                <TableHead className="font-medium min-w-[10em] text-center">製粉会社</TableHead>
                 <TableHead className="font-medium w-16 text-center">操作</TableHead>
               </TableRow>
             </TableHeader>
