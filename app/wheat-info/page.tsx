@@ -90,11 +90,11 @@ export default function WheatInfoPage() {
       <div className="space-y-6">
         <h1 className="text-2xl font-semibold">小麦情報</h1>
 
-        <div className="rounded-lg border bg-card">
+        <div className="rounded-lg border bg-card overflow-x-auto relative">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50/50">
-                <TableHead className="font-medium text-center min-w-[10em]">名称</TableHead>
+                <TableHead className="font-medium text-center min-w-[10em] sticky left-0 bg-gray-50/50 z-20">名称</TableHead>
                 <TableHead
                   className="font-medium text-center px-1 cursor-pointer"
                   onClick={() => sortData("proteinPercentage")}
@@ -115,7 +115,7 @@ export default function WheatInfoPage() {
             <TableBody>
               {wheats.map((wheat) => (
                 <TableRow key={wheat.id}>
-                  <TableCell className="text-center">{wheat.name}</TableCell>
+                  <TableCell className="text-center sticky left-0 bg-white">{wheat.name}</TableCell>
                   <TableCell className="text-center px-1">{wheat.proteinPercentage.toFixed(1)}</TableCell>
                   <TableCell className="text-center px-1">{wheat.ashPercentage.toFixed(1)}</TableCell>
                   <TableCell className="text-center">{wheat.origin}</TableCell>
